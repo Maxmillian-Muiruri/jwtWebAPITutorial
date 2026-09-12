@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using jwtWebAPITutorial;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using jwtWebAPITutorial;
-using System.Security.Cryptography;
-using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Cryptography;
 
 
 namespace jwtWebAPITutorial.Controllers
@@ -17,14 +18,21 @@ namespace jwtWebAPITutorial.Controllers
         public static User user = new User();
 
         public IConfiguration Configuration { get; }
+        public IUserService UserService { get; }
 
-        public AuthController(IConfiguration configuration)
+        public AuthController(IConfiguration configuration, IUserService userService)
         {
             Configuration = configuration;
+            UserService = userService;
+        }
+        [HttpGet, Authorize]
+        public ActionResult<string> GetMe()
+        {
+            var userName = User.Identity?.Name;
+            return Ok(userName);
         }
 
         [HttpPost("register")]
-
         public async Task<ActionResult<User>> Register(UserDto request)
         {
 

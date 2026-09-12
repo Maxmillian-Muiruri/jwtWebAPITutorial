@@ -1,3 +1,4 @@
+global using jwtWebAPITutorial.Services.userService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -11,6 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddSwaggerGen(Options =>
 {
     Options.AddSecurityDefinition("oauth2", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
@@ -21,7 +23,7 @@ builder.Services.AddSwaggerGen(Options =>
         Type = Microsoft.OpenApi.Models.SecuritySchemeType.ApiKey,
         Scheme = "Bearer"
     });
-
+ 
     Options.OperationFilter<SecurityRequirementsOperationFilter>();
 });
 
@@ -36,6 +38,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience =   false
         };
     });
+builder.Services.AddHttpContextAccessor();
+
 
 var app = builder.Build();
 
